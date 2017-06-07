@@ -5,18 +5,13 @@ import negotiator.AgentID;
 import negotiator.Bid;
 import negotiator.actions.Accept;
 import negotiator.actions.Action;
-import negotiator.actions.EndNegotiation;
 import negotiator.actions.Offer;
-import negotiator.bidding.BidDetails;
 import negotiator.boaframework.SortedOutcomeSpace;
+import negotiator.issue.Value;
 import negotiator.parties.AbstractNegotiationParty;
 import negotiator.parties.NegotiationInfo;
-import negotiator.parties.NegotiationParty;
-import negotiator.persistent.PersistentDataContainer;
 import negotiator.protocol.MultilateralProtocol;
 import negotiator.protocol.StackedAlternatingOffersProtocol;
-import negotiator.timeline.TimeLineInfo;
-import negotiator.utility.AbstractUtilitySpace;
 
 /*
  * @author Paul Meuser
@@ -30,6 +25,7 @@ public class meuserAgent extends AbstractNegotiationParty{
 	private Bid mostRecentBid = null;
 	private Bid nextBid = null;
 	private double maxUtil;
+	private int numIssues;
 	
 	
 	
@@ -46,6 +42,8 @@ public class meuserAgent extends AbstractNegotiationParty{
 		bidPool = new SortedOutcomeSpace(utilitySpace);
 		nextBid = bidPool.getMaxBidPossible().getBid();
 		maxUtil = getUtility(nextBid);
+		//record number of issues in bidding domain
+		numIssues = nextBid.getIssues().size();
 		
 		mostRecentAction = null;
 		
@@ -89,7 +87,7 @@ public class meuserAgent extends AbstractNegotiationParty{
 	}
 	
 	//Determines next bid by conceding utility at increasing rate as deadline approaches.
-	private void updateNextBid() {
+	private void updateNextBid() {	
 		//find the current time as fraction of total time available
 		double now = getTimeLine().getTime();
 		//generate next expected utility based on current time
